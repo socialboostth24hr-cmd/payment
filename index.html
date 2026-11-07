@@ -1,13 +1,260 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#101827" />
-  <title>Friend Follow | Payment System</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Friend Follow | Payment System</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+
+*{box-sizing:border-box}
+body{margin:0;background:#f2f5fa;color:#172033;font-family:'Kanit',sans-serif}
+.page{max-width:700px;margin:auto;padding:25px 18px}
+header{display:flex;justify-content:space-between;align-items:center;padding:15px 0 35px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{background:#172033;color:white;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-weight:bold;font-size:20px}
+.brand h2{font-size:18px;margin:0}
+.brand small{font-size:9px;letter-spacing:1.5px;color:#8993a3}
+.secure{font-size:10px;color:#168b62}
+.hero{padding:30px 8px}
+.hero small{letter-spacing:3px;color:#71809a}
+.hero h1{font-size:clamp(45px,10vw,70px);line-height:1.1;margin:15px 0}
+.hero h1 span{color:#526b9e}
+.hero p{color:#8993a3;font-size:14px}
+.panel{background:white;border-radius:22px;padding:28px;box-shadow:0 15px 50px #2538580c}
+.panel h2{font-size:21px;margin:0 0 8px}
+.muted{color:#8993a3;font-size:13px}
+.account{background:#f4f7fb;padding:16px;border-radius:13px;margin:20px 0;border:1px solid #e7edf5}
+.account small{color:#8993a3}
+.account h3{margin:5px 0;font-size:23px}
+label{display:block;font-size:13px;margin:20px 0 9px}
+input{width:100%;padding:15px;border:1px solid #e3e8f0;background:#f9fafc;border-radius:12px;font-size:20px;outline:none}
+input:focus{border-color:#526b9e}
+.info{background:#f1f5fa;padding:13px;border-radius:10px;color:#66758d;font-size:12px;margin-top:15px}
+button{font-family:inherit;cursor:pointer}
+.primary{width:100%;border:0;background:#172033;color:white;padding:16px;border-radius:12px;margin-top:20px;font-size:15px}
+.primary:hover{background:#344c75}
+.secondary{width:100%;padding:14px;border:1px solid #e0e5ed;background:white;border-radius:12px;margin-top:10px}
+.error{color:#c43d3d;background:#fff0f0;padding:12px;border-radius:10px;margin-top:15px;font-size:13px}
+.result{text-align:center}
+.success{display:inline-block;background:#eaf8f1;color:#168b62;padding:8px 15px;border-radius:30px;font-size:11px}
+#qrcode{display:flex;justify-content:center;margin:25px auto;padding:12px;background:white;width:max-content;border:1px solid #eee;border-radius:15px}
+#qrcode img,#qrcode canvas{max-width:100%;height:auto!important}
+.warning{background:#f1f5fa;color:#344c75;padding:13px;border-radius:10px;font-size:12px}
+.amount{background:#f7f9fc;padding:22px;border-radius:15px;margin-top:18px}
+.amount h1{font-size:38px;margin:8px 0}
+.amount small{color:#8490a4}
+.locked{color:#168b62;font-size:11px}
+.details{text-align:left;background:#fafbfd;padding:14px;border-radius:12px;margin-top:15px;font-size:12px;line-height:2}
+.notice{background:white;padding:20px;border-radius:15px;margin-top:20px}
+.notice h3{margin:0 0 7px;font-size:15px}
+.notice p{font-size:12px;color:#7c8799;line-height:1.8;margin:0}
+footer{text-align:center;padding:40px 0 20px}
+footer strong{letter-spacing:3px}
+footer p,footer small{font-size:10px;color:#8993a3}
+@media(max-width:450px){.panel{padding:20px 16px}.secure{font-size:8px}}
+</style>
 </head>
+
 <body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
+<main class="page">
+
+<header>
+<div class="brand">
+<div class="logo">FF</div>
+<div>
+<h2>Friend Follow</h2>
+<small>OFFICIAL PAYMENT SYSTEM</small>
+</div>
+</div>
+<div class="secure">● SECURE PAYMENT</div>
+</header>
+
+<section class="hero">
+<small>FRIEND FOLLOW OFFICIAL</small>
+<h1>Payment<br><span>Generator.</span></h1>
+<p>ระบบสร้าง QR Code รับชำระเงิน พร้อมกำหนดยอดชำระอัตโนมัติ</p>
+</section>
+
+<section class="panel" id="form">
+<h2>สร้างรายการชำระเงิน</h2>
+<p class="muted">กรอกยอดเงินที่ต้องการเรียกเก็บ</p>
+
+<div class="account">
+<small>หมายเลขรับเงิน PromptPay</small>
+<h3>099-130-1221</h3>
+<small>FRIEND FOLLOW</small>
+</div>
+
+<label>ยอดเงินที่ต้องการเรียกเก็บ (บาท)</label>
+<input id="amountInput" type="number" min="0.01" max="1000000" step="0.01" placeholder="0.00">
+
+<div class="info">✦ ระบบสุ่มเศษสตางค์เพิ่มเติม 0.01–0.99 บาท</div>
+
+<div id="error" class="error" hidden></div>
+
+<button class="primary" id="createBtn" onclick="createQR()">สร้าง QR Code →</button>
+</section>
+
+<section class="panel result" id="result" hidden style="margin-top:20px">
+
+<div class="success">✓ QR CODE CREATED</div>
+<h2 style="margin-top:18px">QR Code สำหรับชำระเงิน</h2>
+<p class="muted">กรุณาสแกน QR Code เพื่อชำระเงิน</p>
+
+<div id="qrcode"></div>
+
+<div class="warning">
+⚠ QR Code นี้ใช้สำหรับโอนเงินให้ร้าน Friend Follow เท่านั้น
+</div>
+
+<div class="amount">
+<small>ยอดชำระเงินทั้งหมด</small>
+<h1 id="totalAmount">0.00 บาท</h1>
+<div class="locked">🔒 LOCKED PAYMENT AMOUNT</div>
+</div>
+
+<div class="details">
+<div>ร้านค้า: <b>Friend Follow</b></div>
+<div>PromptPay: <b>099-130-1221</b></div>
+<div>เลขที่รายการ: <b id="reference"></b></div>
+<div>วันที่สร้าง: <b id="createdAt"></b></div>
+</div>
+
+<button class="primary" onclick="downloadQR()">↓ ดาวน์โหลด QR Code</button>
+<button class="secondary" onclick="newPayment()">+ สร้างรายการใหม่</button>
+</section>
+
+<section class="notice">
+<h3>ช่องทางการชำระเงิน</h3>
+<p>รองรับการชำระเงินผ่านแอปพลิเคชันธนาคารที่รองรับมาตรฐาน PromptPay และ TrueMoney Wallet ทั้งนี้ขึ้นอยู่กับการรองรับ QR ของผู้ให้บริการ</p>
+</section>
+
+<section class="notice">
+<h3>ประกาศแจ้งเตือน</h3>
+<p>QR Code นี้จัดทำขึ้นเพื่อใช้สำหรับชำระเงินให้แก่ร้าน Friend Follow เท่านั้น กรุณาตรวจสอบยอดเงินและชื่อผู้รับก่อนยืนยันการโอนทุกครั้ง</p>
+</section>
+
+<footer>
+<strong>FRIEND FOLLOW</strong>
+<p>OFFICIAL PAYMENT SYSTEM</p>
+<small>© 2026 Friend Follow. All rights reserved.</small>
+</footer>
+
+</main>
+
+<script>
+let currentQR = null;
+
+function createQR(){
+const input = document.getElementById('amountInput');
+const error = document.getElementById('error');
+const base = Number(input.value);
+
+error.hidden = true;
+
+if(!Number.isFinite(base) || base <= 0 || base > 1000000){
+error.textContent = 'กรุณากรอกยอดเงินตั้งแต่ 0.01 ถึง 1,000,000 บาท';
+error.hidden = false;
+return;
+}
+
+if(typeof QRCode === 'undefined'){
+error.textContent = 'ไม่สามารถโหลดระบบ QR Code ได้ กรุณาลองใหม่';
+error.hidden = false;
+return;
+}
+
+const randomSatang = Math.floor(Math.random()*99)+1;
+const totalSatang = Math.round(base*100)+randomSatang;
+const total = totalSatang/100;
+
+const payload = createPromptPayPayload('0991301221',total);
+
+document.getElementById('qrcode').innerHTML = '';
+
+new QRCode(document.getElementById('qrcode'),{
+text:payload,
+width:280,
+height:280,
+colorDark:'#101827',
+colorLight:'#ffffff',
+correctLevel:QRCode.CorrectLevel.M
+});
+
+document.getElementById('totalAmount').textContent =
+total.toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2})+' บาท';
+
+document.getElementById('reference').textContent =
+'FF'+Date.now().toString().slice(-8);
+
+document.getElementById('createdAt').textContent =
+new Date().toLocaleString('th-TH');
+
+document.getElementById('form').hidden = true;
+document.getElementById('result').hidden = false;
+currentQR = true;
+}
+
+function newPayment(){
+document.getElementById('form').hidden = false;
+document.getElementById('result').hidden = true;
+document.getElementById('amountInput').value = '';
+document.getElementById('error').hidden = true;
+document.getElementById('qrcode').innerHTML = '';
+currentQR = null;
+}
+
+function downloadQR(){
+const canvas = document.querySelector('#qrcode canvas');
+if(!canvas)return;
+const link=document.createElement('a');
+link.download='Friend-Follow-Payment.png';
+link.href=canvas.toDataURL('image/png');
+link.click();
+}
+
+function tlv(id,value){
+const length = String(value.length).padStart(2,'0');
+return id+length+value;
+}
+
+function crc16(str){
+let crc=0xFFFF;
+for(let i=0;i<str.length;i++){
+crc ^= str.charCodeAt(i)<<8;
+for(let j=0;j<8;j++){
+crc=(crc&0x8000)?((crc<<1)^0x1021):(crc<<1);
+crc &= 0xFFFF;
+}
+}
+return crc.toString(16).toUpperCase().padStart(4,'0');
+}
+
+function createPromptPayPayload(phone,amount){
+const normalized=phone.replace(/\D/g,'');
+const proxy='0066'+normalized.slice(1);
+const merchant=tlv('00','A000000677010111')+
+tlv('01',proxy);
+
+const account=tlv('29',merchant);
+const currency=tlv('53','764');
+const country=tlv('58','TH');
+const money=tlv('54',amount.toFixed(2));
+
+const body=tlv('00','01')+
+tlv('01','12')+
+account+
+currency+
+money+
+country+
+'6304';
+
+return body+crc16(body);
+}
+</script>
+
 </body>
 </html>
